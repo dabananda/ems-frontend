@@ -5,6 +5,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
 import Homepage from './pages/Homepage'
 import Employee from './components/Employee'
+import ListDepartment from './components/ListDepartment'
+import Department from './components/Department'
 
 export default function App() {
   return (
@@ -28,6 +30,18 @@ export default function App() {
             <Route
               path="/edit-employee/:id"
               element={<Employee />}
+            ></Route>
+            <Route
+              path="/departments"
+              element={<ListDepartment />}
+            ></Route>
+            <Route
+              path="/add-department"
+              element={<Department />}
+            ></Route>
+            <Route
+              path="/edit-department/:id"
+              element={<Department />}
             ></Route>
           </Routes>
           <Footer />
