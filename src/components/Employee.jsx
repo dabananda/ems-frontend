@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { createEmployee, getEmployee, updateEmployee } from '../services/EmployeeService'
 import { useNavigate, useParams } from 'react-router-dom'
+import { listDepartments } from '../services/DepartmentService'
 
 const Employee = () => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
+  const [departmentId, setDepartmentId] = useState('');
+  const [departments, setDepartments] = useState([]);
   const [errors, setErrors] = useState({
     firstName: '',
     lastName: '',
@@ -20,7 +23,7 @@ const Employee = () => {
     e.preventDefault()
 
     if (validateForm()) {
-      const employee = { firstName, lastName, email }
+      const employee = { firstName, lastName, email, departmentId };
       if (id) {
         updateEmployee(id, employee)
           .then((response) => {
@@ -83,53 +86,79 @@ const Employee = () => {
     }
   }, [id])
 
+  useEffect(() => {
+    listDepartments()
+      .then((response) => {
+        setDepartments(response.data);
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
   return (
-    <div className="card w-50 mx-auto mt-5">
-      <h3 className="card-header text-center">{pageTitle()}</h3>
-      <div className="card-body">
+    <div className='card w-50 mx-auto mt-5'>
+      <h3 className='card-header text-center'>{pageTitle()}</h3>
+      <div className='card-body'>
         <form>
-          <div className="row">
-            <div className="col-md">
-              <div className="mb-3">
-                <label className="form-label">First Name</label>
+          <div className='row'>
+            <div className='col-md'>
+              <div className='mb-3'>
+                <label className='form-label'>First Name</label>
                 <input
-                  type="text"
+                  type='text'
                   className={`form-control ${errors.firstName ? 'is-invalid' : ''}`}
-                  name="firstName"
+                  name='firstName'
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                 />
-                {errors.firstName && <div className="invalid-feedback">{errors.firstName}</div>}
+                {errors.firstName && <div className='invalid-feedback'>{errors.firstName}</div>}
               </div>
             </div>
-            <div className="col-md">
-              <div className="mb-3">
-                <label className="form-label">Last Name</label>
+            <div className='col-md'>
+              <div className='mb-3'>
+                <label className='form-label'>Last Name</label>
                 <input
-                  type="text"
+                  type='text'
                   className={`form-control ${errors.lastName ? 'is-invalid' : ''}`}
-                  name="lastName"
+                  name='lastName'
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                 />
-                {errors.lastName && <div className="invalid-feedback">{errors.lastName}</div>}
+                {errors.lastName && <div className='invalid-feedback'>{errors.lastName}</div>}
               </div>
             </div>
           </div>
-          <div className="mb-3">
-            <label className="form-label">Email</label>
+          <div className='mb-3'>
+            <label className='form-label'>Email</label>
             <input
-              type="email"
+              type='email'
               className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-              name="email"
+              name='email'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+            {errors.email && <div className='invalid-feedback'>{errors.email}</div>}
+          </div>
+          <div className='mb-3'>
+            <label className='form-label'>Select Department</label>
+            <select
+              className='form-select'
+              value={departmentId}
+              onChange={(e) => setDepartmentId(e.target.value)}
+            >
+              <option value=''>Select Department</option>
+              {departments.map((dept) => (
+                <option
+                  key={dept.id}
+                  value={dept.id}
+                >
+                  {dept.departmentName}
+                </option>
+              ))}
+            </select>
           </div>
           <button
-            type="submit"
-            className="btn btn-primary w-100"
+            type='submit'
+            className='btn btn-primary w-100'
             onClick={handleSaveOrUpdateEmployee}
           >
             Submit
@@ -137,7 +166,7 @@ const Employee = () => {
         </form>
       </div>
     </div>
-  )
+  );
 }
 
 export default Employee
